@@ -27,7 +27,3 @@ Provides modules to enable tomcat as a runtime for the cui-portal
         <artifactId>portal-tomcat-runtime</artifactId>
     </dependency>
 ----
-
-=== Credentials
-
-* `SONAR_TOKEN` -> Sonar-Cloud
