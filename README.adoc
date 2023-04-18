@@ -1,56 +1,32 @@
-= cui-java-module-template
+= portal-tomcat-runtime
 
 == Status
 
-image:https://github.com/cuioss/cui-java-module-template/actions/workflows/maven.yml/badge.svg[Java CI with Maven,link=https://github.com/cuioss/cui-java-module-template/actions/workflows/maven.yml]
+image:https://github.com/cuioss/portal-tomcat-runtime/actions/workflows/maven.yml/badge.svg[Java CI with Maven,link=https://github.com/cuioss/portal-tomcat-runtime/actions/workflows/maven.yml]
 image:http://img.shields.io/:license-apache-blue.svg[License,link=http://www.apache.org/licenses/LICENSE-2.0.html]
-image:https://maven-badges.herokuapp.com/maven-central/de.cuioss/cui-java-module-template/badge.svg[Maven Central,link=https://maven-badges.herokuapp.com/maven-central/de.cuioss/cui-java-module-template]
+image:https://maven-badges.herokuapp.com/maven-central/de.cuioss.portal.tomcat/portal-tomcat-runtime/badge.svg[Maven Central,link=https://maven-badges.herokuapp.com/maven-central/de.cuioss.portal.tomcat/portal-tomcat-runtime]
 
-https://sonarcloud.io/summary/new_code?id=cuioss_cui-java-module-template[image:https://sonarcloud.io/api/project_badges/measure?project=cuioss_cui-java-module-template&metric=alert_status[Quality
+https://sonarcloud.io/summary/new_code?id=cuioss_portal-tomcat-runtime[image:https://sonarcloud.io/api/project_badges/measure?project=cuioss_portal-tomcat-runtime&metric=alert_status[Quality
 Gate Status]]
-image:https://sonarcloud.io/api/project_badges/measure?project=cuioss_cui-java-module-template&metric=ncloc[Lines of Code,link=https://sonarcloud.io/summary/new_code?id=cuioss_cui-java-module-template]
-image:https://sonarcloud.io/api/project_badges/measure?project=cuioss_cui-java-module-template&metric=coverage[Coverage,link=https://sonarcloud.io/summary/new_code?id=cuioss_cui-java-module-template]
+image:https://sonarcloud.io/api/project_badges/measure?project=cuioss_portal-tomcat-runtime&metric=ncloc[Lines of Code,link=https://sonarcloud.io/summary/new_code?id=cuioss_portal-tomcat-runtime]
+image:https://sonarcloud.io/api/project_badges/measure?project=cuioss_portal-tomcat-runtime&metric=coverage[Coverage,link=https://sonarcloud.io/summary/new_code?id=cuioss_portal-tomcat-runtime]
 
 
-https://cuioss.github.io/cui-java-module-template/about.html[Generated Documentation on github-pages]
+https://cuioss.github.io/portal-tomcat-runtime/about.html[Generated Documentation on github-pages]
 
 == What is it?
 
-This is a template repository for creating java-modules for cui-open-source-projects. This incorporates all necessary java-structures, including `pom.xml`, sensible project-documentation, 
-an predefined github pipelines. 
-
-It is meant to be used as copy-paste-template.
+Provides modules to enable tomcat as a runtime for the cui-portal 
 
 === Maven Coordinates
 
 [source,xml]
 ----
     <dependency>
-        <groupId>de.cuioss</groupId>
-        <artifactId>cui-java-module-template</artifactId>
+        <groupId>de.cuioss.portal.tomcat</groupId>
+        <artifactId>portal-tomcat-runtime</artifactId>
     </dependency>
 ----
-
-== Customization
-
-=== Names / Keys
-
-Create a new Repository by clicking "Use this template"
-Replace all  of `cui-java-module-template` with the new project 'key' / name, e.g. `my-java-module`. Relevant Files are:
-
-[CAUTION]
-====
-The key must *not* contain spaces. They are used for creating urls as well.
-
-====
-
-
-* `README.adoc` -> the badges on top
-* `pom.xml`
-* `SECURITY.adoc`
-* `.github/project.yml`
-* `src/site/site.xml`
-* `src/site/asciidoc/about.adoc`
 
 === Credentials
 
@@ -76,8 +52,6 @@ A sonar token can be derived from https://sonarcloud.io/account/security
 
 === Further Steps
 
-* `pom.xml`: Adjust `name` and `description` elements
-* `src/site/asciidoc/about.adoc`: Adjust content
 * Review / Enable the elements under 'Security' Tab
 * Review / Add Collaborators
 * Add (link) the resulting maven-documentation: https://github.com/cuioss/cuioss.github.io/edit/main/README.md[github.io-documentation] 

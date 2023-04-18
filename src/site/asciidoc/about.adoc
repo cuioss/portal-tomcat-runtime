@@ -1,3 +1,3 @@
 == About
 
-Some information about this project
+Provides modules to enable tomcat as a runtime for the cui-portal

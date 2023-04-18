@@ -4,24 +4,25 @@
     <parent>
         <groupId>de.cuioss</groupId>
         <artifactId>cui-java-parent</artifactId>
-        <version>0.2.6</version>
+        <version>0.2.7</version>
         <relativePath />
     </parent>
-    <artifactId>cui-java-module-template</artifactId>
-    <name>cui java module template</name>
+    <groupId>de.cuioss.portal.tomcat</groupId>
+    <artifactId>portal-tomcat-runtime</artifactId>
+    <name>Portal Tomcat Runtime</name>
     <version>1.0.0-SNAPSHOT</version>
-    <description>Template module for cuioss open source projects.
+    <description>Provides modules to enable tomcat as a runtime for the cui-portal.
     </description>
     <packaging>jar</packaging>
-    <url>https://github.com/cuioss/cui-java-module-template/</url>
+    <url>https://github.com/cuioss/portal-tomcat-runtime/</url>
     <scm>
-        <url>https://github.com/cuioss/cui-java-module-template/</url>
-        <connection>scm:git:https://github.com/cuioss/cui-java-module-template.git</connection>
-        <developerConnection>scm:git:https://github.com/cuioss/cui-java-module-template/</developerConnection>
+        <url>https://github.com/cuioss/portal-tomcat-runtime/</url>
+        <connection>scm:git:https://github.com/cuioss/portal-tomcat-runtime.git</connection>
+        <developerConnection>scm:git:https://github.com/cuioss/portal-tomcat-runtime/</developerConnection>
         <tag>HEAD</tag>
     </scm>
     <issueManagement>
-        <url>https://github.com/cuioss/cui-java-module-template/issues</url>
+        <url>https://github.com/cuioss/portal-tomcat-runtime/issues</url>
         <system>GitHub Issues</system>
     </issueManagement>
     <dependencies>
