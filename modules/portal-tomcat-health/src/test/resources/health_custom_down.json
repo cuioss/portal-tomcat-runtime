@@ -1,0 +1,10 @@
+{
+  "status": "DOWN",
+  "HealthCheckDynamic": {
+    "status": "DOWN",
+    "data_bool": true,
+    "data_long": 1234567890,
+    "data_key_1": "data_value_1",
+    "data_key_2": "data_value_2"
+  }
+}

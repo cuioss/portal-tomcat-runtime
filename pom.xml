@@ -13,7 +13,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <description>Provides modules to enable tomcat as a runtime for the cui-portal.
     </description>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
     <url>https://github.com/cuioss/portal-tomcat-runtime/</url>
     <scm>
         <url>https://github.com/cuioss/portal-tomcat-runtime/</url>
@@ -25,15 +25,8 @@
         <url>https://github.com/cuioss/portal-tomcat-runtime/issues</url>
         <system>GitHub Issues</system>
     </issueManagement>
-    <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-        <!-- Unit testing -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>bom</module>
+        <module>modules</module>
+    </modules>
 </project>
