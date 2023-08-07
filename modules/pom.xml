@@ -10,7 +10,7 @@
     <name>Portal Tomcat Modules</name>
     <description>Agregator for all portal-tomcat-modules</description>
     <properties>
-        <version.cui.parent>0.2.7</version.cui.parent>
+        <version.cui.parent>0.2.9</version.cui.parent>
         <version.portal.core>1.0.0-SNAPSHOT</version.portal.core>
     </properties>
     <dependencyManagement>
