@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>de.cuioss</groupId>
@@ -11,14 +13,16 @@
     <artifactId>portal-tomcat-runtime</artifactId>
     <name>Portal Tomcat Runtime</name>
     <version>1.0.0-SNAPSHOT</version>
-    <description>Provides modules to enable tomcat as a runtime for the cui-portal.
+    <description>Provides modules to enable tomcat as a runtime for the
+        cui-portal.
     </description>
     <packaging>pom</packaging>
     <url>https://github.com/cuioss/portal-tomcat-runtime/</url>
     <scm>
         <url>https://github.com/cuioss/portal-tomcat-runtime/</url>
         <connection>scm:git:https://github.com/cuioss/portal-tomcat-runtime.git</connection>
-        <developerConnection>scm:git:https://github.com/cuioss/portal-tomcat-runtime/</developerConnection>
+        <developerConnection>
+            scm:git:https://github.com/cuioss/portal-tomcat-runtime/</developerConnection>
         <tag>HEAD</tag>
     </scm>
     <issueManagement>
@@ -29,4 +33,21 @@
         <module>bom</module>
         <module>modules</module>
     </modules>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openrewrite.maven</groupId>
+                <artifactId>rewrite-maven-plugin</artifactId>
+                <configuration>
+                    <activeRecipes>
+                        <recipe>org.openrewrite.java.AddApache2LicenseHeader</recipe>
+                        <recipe>
+                            org.openrewrite.java.testing.junit5.JUnit5BestPractices</recipe>
+                        <recipe>org.openrewrite.java.migrate.Java8toJava11</recipe>
+                        <recipe>org.openrewrite.java.migrate.UpgradeToJava17</recipe>
+                    </activeRecipes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

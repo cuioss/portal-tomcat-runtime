@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.cuioss.portal.tomcat.metrics;
 
 import static de.cuioss.tools.string.MoreStrings.nullToEmpty;
@@ -38,7 +53,8 @@ import de.cuioss.tools.logging.CuiLogger;
  * </pre>
  *
  * <p>
- * As the {@link WebFilter} annotation has no element for order, other filters could ran before.
+ * As the {@link WebFilter} annotation has no element for order, other filters
+ * could ran before.
  * </p>
  *
  * @author Sven Haag
@@ -62,10 +78,8 @@ public class ServletMetrics implements Filter {
     }
 
     @Override
-    public void doFilter(final ServletRequest servletRequest,
-            final ServletResponse servletResponse,
-            final FilterChain filterChain)
-        throws IOException, ServletException {
+    public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
+            final FilterChain filterChain) throws IOException, ServletException {
 
         if (!(servletRequest instanceof HttpServletRequest)) {
             filterChain.doFilter(servletRequest, servletResponse);
@@ -77,28 +91,22 @@ public class ServletMetrics implements Filter {
         final var request = (HttpServletRequest) servletRequest;
         final var servletPath = getName(request);
 
-        if (servletPath.startsWith("faces/pages/")
-                || servletPath.equals("javax.faces.resource")) {
+        if (servletPath.startsWith("faces/pages/") || servletPath.equals("javax.faces.resource")) {
             filterChain.doFilter(servletRequest, servletResponse);
         } else if (!request.isAsyncStarted()) {
             final var context = new Tag("context", getContext(request));
             final var name = new Tag("name", servletPath);
 
             final var servletConcurrentRequest = applicationRegistry.concurrentGauge(
-                    new MetadataBuilder()
-                            .withName("servlet.request.concurrent.total")
-                            .withDescription("Number of concurrent requests for given context.")
-                            .build(),
+                    new MetadataBuilder().withName("servlet.request.concurrent.total")
+                            .withDescription("Number of concurrent requests for given context.").build(),
                     context, name);
             servletConcurrentRequest.inc();
 
-            final var timer = applicationRegistry.timer(new MetadataBuilder()
-                    .withName("servlet.request")
-                    .withUnit(MetricUnits.SECONDS)
-                    .withDescription("The time taken fulfilling servlet requests")
-                    .build(),
-                    context, name, new Tag("method", request.getMethod()))
-                    .time(); // start timer
+            final var timer = applicationRegistry.timer(
+                    new MetadataBuilder().withName("servlet.request").withUnit(MetricUnits.SECONDS)
+                            .withDescription("The time taken fulfilling servlet requests").build(),
+                    context, name, new Tag("method", request.getMethod())).time(); // start timer
 
             try {
                 // calls the next filter in the chain. returns when servlet has been processed.
@@ -108,12 +116,10 @@ public class ServletMetrics implements Filter {
 
                 servletConcurrentRequest.dec();
 
-                applicationRegistry.concurrentGauge(new MetadataBuilder()
-                        .withName("servlet.response.status.total")
-                        .withDescription("Number of requests for given context and status code.")
-                        .build(),
-                        context, name, new Tag("status", getStatusString(servletResponse)))
-                        .inc();
+                applicationRegistry.concurrentGauge(
+                        new MetadataBuilder().withName("servlet.response.status.total")
+                                .withDescription("Number of requests for given context and status code.").build(),
+                        context, name, new Tag("status", getStatusString(servletResponse))).inc();
             }
         } else {
             LOGGER.info(
@@ -132,9 +138,7 @@ public class ServletMetrics implements Filter {
 
     private String getStatusString(final ServletResponse response) {
         try {
-            return Integer.toString(
-                    ((HttpServletResponse) response)
-                            .getStatus());
+            return Integer.toString(((HttpServletResponse) response).getStatus());
         } catch (final Exception ex) {
             return Integer.toString(UNDEFINED_HTTP_STATUS);
         }

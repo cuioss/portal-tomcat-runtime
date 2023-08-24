@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.cuioss.portal.tomcat.authentication;
 
 import static de.cuioss.portal.authentication.facade.AuthenticationResults.invalidResultKey;
@@ -38,8 +53,9 @@ import lombok.Getter;
 import lombok.ToString;
 
 /**
- * Implementation of the {@link AuthenticationFacade} interface that authenticates against the
- * {@link HttpServletRequest#login(String, String)} and {@link HttpServletRequest#logout()} .
+ * Implementation of the {@link AuthenticationFacade} interface that
+ * authenticates against the {@link HttpServletRequest#login(String, String)}
+ * and {@link HttpServletRequest#logout()} .
  *
  * @author Oliver Wolff
  */
@@ -51,8 +67,7 @@ public class ServletAuthenticationFacade extends BaseAuthenticationFacade
 
     private static final CuiLogger log = new CuiLogger(ServletAuthenticationFacade.class);
 
-    private static final String PORTAL_504_UNABLE_TO_DETERMINE_ROLE =
-        "Portal-504: Unable to determine role for user {} found principal-class is {}";
+    private static final String PORTAL_504_UNABLE_TO_DETERMINE_ROLE = "Portal-504: Unable to determine role for user {} found principal-class is {}";
 
     private static final String SESSION_KEY_USER_INFO = "sessionStoredAuthenticatedUserInfo";
 
@@ -81,9 +96,8 @@ public class ServletAuthenticationFacade extends BaseAuthenticationFacade
                 return determineAuthenticatedUserInfoAndAddToSession(loginCredentials.getUsername(), servletRequest);
             } catch (final RuntimeException | ServletException e) {
                 log.debug("Unable to login due to ", e);
-                return AuthenticationResults
-                        .invalidResultKey(AuthenticationResults.KEY_INVALID_CREDENTIALS, loginCredentials.getUsername(),
-                                e);
+                return AuthenticationResults.invalidResultKey(AuthenticationResults.KEY_INVALID_CREDENTIALS,
+                        loginCredentials.getUsername(), e);
             }
         }
         return AuthenticationResults.RESULT_INCOMPLETE_CREDENTIALS;
@@ -104,8 +118,8 @@ public class ServletAuthenticationFacade extends BaseAuthenticationFacade
         return false;
     }
 
-    private ResultObject<AuthenticatedUserInfo> determineAuthenticatedUserInfoAndAddToSession(
-            final String username, final HttpServletRequest servletRequest) {
+    private ResultObject<AuthenticatedUserInfo> determineAuthenticatedUserInfoAndAddToSession(final String username,
+            final HttpServletRequest servletRequest) {
 
         var addUserToSession = true;
         var principal = servletRequest.getUserPrincipal();
@@ -139,13 +153,8 @@ public class ServletAuthenticationFacade extends BaseAuthenticationFacade
     }
 
     private static AuthenticatedUserInfo createAuthenticatedUser(final Principal principal) {
-        return BaseAuthenticatedUserInfo.builder()
-                .authenticated(true)
-                .identifier(principal.getName())
-                .displayName(principal.getName())
-                .roles(getRoles(principal))
-                .system("TomcatRealm")
-                .build();
+        return BaseAuthenticatedUserInfo.builder().authenticated(true).identifier(principal.getName())
+                .displayName(principal.getName()).roles(getRoles(principal)).system("TomcatRealm").build();
     }
 
     private static Optional<Principal> getBasicAuthPrincipal(final HttpServletRequest servletRequest) {
@@ -189,9 +198,7 @@ public class ServletAuthenticationFacade extends BaseAuthenticationFacade
             log.debug("Basic Authorization Header found");
             final var base64Credentials = authorization.substring(token.length()).trim();
             if (base64Credentials.length() > 0) {
-                return Optional.of(new String(
-                        Base64.getDecoder().decode(base64Credentials),
-                        StandardCharsets.UTF_8));
+                return Optional.of(new String(Base64.getDecoder().decode(base64Credentials), StandardCharsets.UTF_8));
             }
             log.debug("Basic Authorization Header with 0 length");
         }
@@ -211,8 +218,8 @@ public class ServletAuthenticationFacade extends BaseAuthenticationFacade
         var roleProperty = PropertyHolder.from(principal.getClass(), "roles");
         if (roleProperty.isPresent()) {
             final var value = roleProperty.get().readFrom(principal);
-            if (value instanceof String[]) {
-                return CollectionLiterals.immutableList((String[]) value);
+            if (value instanceof String[] strings) {
+                return CollectionLiterals.immutableList(strings);
             }
         } else {
             log.error(PORTAL_504_UNABLE_TO_DETERMINE_ROLE, principal.getName(), principal.getClass());
@@ -241,8 +248,7 @@ public class ServletAuthenticationFacade extends BaseAuthenticationFacade
             return sessionUser.get();
         }
 
-        final var info =
-            determineAuthenticatedUserInfoAndAddToSession(null, servletRequest);
+        final var info = determineAuthenticatedUserInfoAndAddToSession(null, servletRequest);
         if (info.isValid()) {
             return info.getResult();
         }

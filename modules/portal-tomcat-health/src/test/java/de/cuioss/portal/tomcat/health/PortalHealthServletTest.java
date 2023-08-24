@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.cuioss.portal.tomcat.health;
 
 import static de.cuioss.portal.configuration.HealthCheckConfigKeys.PORTAL_HEALTHCHECK_CUSTOMOUTPUT;
@@ -46,7 +61,7 @@ import io.smallrye.health.SmallRyeHealthReporter;
 @EnableAutoWeld
 @EnableTestLogger
 @EnablePortalConfiguration
-@AddBeanClasses({SmallRyeHealthReporter.class, PortalTestUserProducer.class})
+@AddBeanClasses({ SmallRyeHealthReporter.class, PortalTestUserProducer.class })
 class PortalHealthServletTest {
 
     private static final CuiLogger log = new CuiLogger(PortalHealthServletTest.class);
@@ -193,9 +208,7 @@ class PortalHealthServletTest {
     void shouldProvideDetailsForUserMPReadiness() throws IOException {
         testUserProducer.authenticated(true);
         readinessCheckDynamic.up();
-        configuration.fireEvent(
-            PORTAL_HEALTHCHECK_CUSTOMOUTPUT, "false",
-            PORTAL_HEALTHCHECK_ROLES_REQUIRED, "");
+        configuration.fireEvent(PORTAL_HEALTHCHECK_CUSTOMOUTPUT, "false", PORTAL_HEALTHCHECK_ROLES_REQUIRED, "");
 
         servletRequest.setServletPath(PortalHealthServlet.REQUEST_PATH_READINESS);
         underTest.executeDoGet(servletRequest, servletResponse);
@@ -242,7 +255,7 @@ class PortalHealthServletTest {
 
     @Test
     @SuppressWarnings("resource")
-        // owolff: test only
+    // owolff: test only
     void shouldHandleWrongEndpoint() throws IOException {
         servletRequest.setServletPath(PortalHealthServlet.REQUEST_PATH_HEALTH + "/foo");
         underTest.executeDoGet(servletRequest, servletResponse);
@@ -253,8 +266,7 @@ class PortalHealthServletTest {
     }
 
     private JsonObject jsonFromClasspath(final String classpath) {
-        final var jsonReader = Json.createReader(new InputStreamReader(
-            getClass().getResourceAsStream(classpath)));
+        final var jsonReader = Json.createReader(new InputStreamReader(getClass().getResourceAsStream(classpath)));
         return jsonReader.readObject();
     }
 
@@ -264,7 +276,7 @@ class PortalHealthServletTest {
     }
 
     private void assertJsonResponse(final JsonObject expectedResponse, final int expectedStatusCode)
-        throws IOException {
+            throws IOException {
         assertEquals(expectedStatusCode, servletResponse.getStatus());
         assertEquals("application/json", servletResponse.getContentType());
         assertEquals(StandardCharsets.UTF_8.name(), servletResponse.getCharacterEncoding());

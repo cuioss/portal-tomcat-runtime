@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.cuioss.portal.tomcat.metrics;
 
 import static de.cuioss.tools.collect.CollectionLiterals.immutableSet;
@@ -21,7 +36,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.cuioss.portal.core.test.mocks.microprofile.PortalTestMetricRegistry;
-import de.cuioss.portal.tomcat.metrics.TomcatMetrics;
 import de.cuioss.test.generator.Generators;
 import de.cuioss.test.generator.TypedGenerator;
 import de.cuioss.tools.collect.MapBuilder;
@@ -44,30 +58,23 @@ class TomcatMetricsTest {
 
     @Test
     void shouldRegisterMicroProfileMetrics() throws MalformedObjectNameException, ReflectionException,
-        AttributeNotFoundException, InstanceNotFoundException, MBeanException {
+            AttributeNotFoundException, InstanceNotFoundException, MBeanException {
 
         final MetricRegistry registry = new PortalTestMetricRegistry();
         var tomcatMetrics = new TomcatMetrics();
 
         MBeanServer mBeanServerMock = EasyMock.createMock(MBeanServer.class);
-        objectName = new ObjectName("objName1",
-                new Hashtable<>(MapBuilder.from(
-                        "host", "hostname",
-                        "context", "contextname",
-                        "name", "servletName")
-                        .toImmutableMap()));
+        objectName = new ObjectName("objName1", new Hashtable<>(
+                MapBuilder.from("host", "hostname", "context", "contextname", "name", "servletName").toImmutableMap()));
 
-        EasyMock
-                .expect(mBeanServerMock.queryMBeans(EasyMock.isA(ObjectName.class), EasyMock.isNull()))
-                .andReturn(immutableSet(new ObjectInstance(objectName, "ClazzName1")))
-                .anyTimes();
+        EasyMock.expect(mBeanServerMock.queryMBeans(EasyMock.isA(ObjectName.class), EasyMock.isNull()))
+                .andReturn(immutableSet(new ObjectInstance(objectName, "ClazzName1"))).anyTimes();
         registerTestMetrics();
         EasyMock.replay(mBeanServerMock);
 
-        new FieldWrapper(MoreReflection
-                .accessField(TomcatMetrics.class, "server")
+        new FieldWrapper(MoreReflection.accessField(TomcatMetrics.class, "server")
                 .orElseThrow(() -> new IllegalStateException("cannot access TomcatMetrics field 'server'")))
-                        .writeValue(tomcatMetrics, mBeanServerMock);
+                .writeValue(tomcatMetrics, mBeanServerMock);
 
         tomcatMetrics.bindTo(registry, false);
 
@@ -106,7 +113,7 @@ class TomcatMetricsTest {
     }
 
     private void registerTestMetrics()
-        throws ReflectionException, AttributeNotFoundException, InstanceNotFoundException, MBeanException {
+            throws ReflectionException, AttributeNotFoundException, InstanceNotFoundException, MBeanException {
 
         // SessionMetrics
         expectServerAttribute("activeSessions", INTEGERS.next());
@@ -117,9 +124,7 @@ class TomcatMetricsTest {
         expectServerAttribute("sessionMaxAliveTime", INTEGERS.next());
         expectServerAttribute("sessionExpireRate", INTEGERS.next());
         expectServerAttribute("maxActive", INTEGERS.next());
-        expectServerAttribute("stateName", Generators.booleans().next()
-                ? "STARTED"
-                : Generators.strings().next());
+        expectServerAttribute("stateName", Generators.booleans().next() ? "STARTED" : Generators.strings().next());
 
         // ServletMetrics
         expectServerAttribute("errorCount", INTEGERS.next());
@@ -145,9 +150,8 @@ class TomcatMetricsTest {
     }
 
     private void expectServerAttribute(final String attribute, final Object returnValue)
-        throws ReflectionException, AttributeNotFoundException, InstanceNotFoundException, MBeanException {
-        EasyMock
-                .expect(mBeanServerMock.getAttribute(EasyMock.eq(objectName), EasyMock.eq(attribute)))
+            throws ReflectionException, AttributeNotFoundException, InstanceNotFoundException, MBeanException {
+        EasyMock.expect(mBeanServerMock.getAttribute(EasyMock.eq(objectName), EasyMock.eq(attribute)))
                 .andReturn(returnValue);
     }
 }

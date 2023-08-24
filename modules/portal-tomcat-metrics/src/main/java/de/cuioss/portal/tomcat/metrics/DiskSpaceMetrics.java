@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.cuioss.portal.tomcat.metrics;
 
 import static java.util.Objects.requireNonNull;
@@ -20,8 +35,7 @@ import lombok.ToString;
  * Registers metrics for free- and total disk space for a given path.
  *
  * @author Sven Haag
- * @see
- *      <a href=
+ * @see <a href=
  *      "https://github.com/micrometer-metrics/micrometer/blob/v1.3.5/micrometer-core/src/main/java/io/micrometer/core/instrument/binder/jvm/DiskSpaceMetrics.java">micrometer-metrics</a>
  */
 @ToString
@@ -57,26 +71,18 @@ final class DiskSpaceMetrics {
         requireNonNull(registry);
 
         final var registryHelper = new RegistryHelper(LOGGER, registry);
-        registryHelper.bindIfNotPresent(
-                new ExtendedMetadataBuilder()
-                        .withName("disk.free")
-                        .withDescription("Usable space for path")
-                        .withUnit(BYTES)
-                        .withType(GAUGE)
-                        .skipsScopeInOpenMetricsExportCompletely(micrometerFormat)
-                        .build(),
-                (Gauge<Long>) path::getUsableSpace,
-                tags);
+        registryHelper
+                .bindIfNotPresent(
+                        new ExtendedMetadataBuilder().withName("disk.free").withDescription("Usable space for path")
+                                .withUnit(BYTES).withType(GAUGE)
+                                .skipsScopeInOpenMetricsExportCompletely(micrometerFormat).build(),
+                        (Gauge<Long>) path::getUsableSpace, tags);
 
-        registryHelper.bindIfNotPresent(
-                new ExtendedMetadataBuilder()
-                        .withName("disk.total")
-                        .withDescription("Total space for path")
-                        .withUnit(BYTES)
-                        .withType(GAUGE)
-                        .skipsScopeInOpenMetricsExportCompletely(micrometerFormat)
-                        .build(),
-                (Gauge<Long>) path::getTotalSpace,
-                tags);
+        registryHelper
+                .bindIfNotPresent(
+                        new ExtendedMetadataBuilder().withName("disk.total").withDescription("Total space for path")
+                                .withUnit(BYTES).withType(GAUGE)
+                                .skipsScopeInOpenMetricsExportCompletely(micrometerFormat).build(),
+                        (Gauge<Long>) path::getTotalSpace, tags);
     }
 }

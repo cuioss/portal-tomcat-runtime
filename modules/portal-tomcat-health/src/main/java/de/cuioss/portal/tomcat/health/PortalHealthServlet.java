@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.cuioss.portal.tomcat.health;
 
 import static de.cuioss.portal.configuration.HealthCheckConfigKeys.PORTAL_HEALTHCHECK_CUSTOMOUTPUT;
@@ -38,14 +53,13 @@ import io.smallrye.health.SmallRyeHealthReporter;
  * <li><code>health/readiness</code></li>
  * </ul>
  *
- * The /health endpoint represents the consolidated response of liveness and readiness.
+ * The /health endpoint represents the consolidated response of liveness and
+ * readiness.
  *
  * @author Sven Haag
  */
-@WebServlet(name = "PortalHealthCheckServlet", urlPatterns = {
-    PortalHealthServlet.REQUEST_PATH_HEALTH,
-    PortalHealthServlet.REQUEST_PATH_LIVENESS,
-    PortalHealthServlet.REQUEST_PATH_READINESS })
+@WebServlet(name = "PortalHealthCheckServlet", urlPatterns = { PortalHealthServlet.REQUEST_PATH_HEALTH,
+        PortalHealthServlet.REQUEST_PATH_LIVENESS, PortalHealthServlet.REQUEST_PATH_READINESS })
 @ApplicationScoped
 @SuppressWarnings("squid:S1075") // owolff: A hard coded url is the actual use-case
 public class PortalHealthServlet extends AbstractPortalServlet {
@@ -57,38 +71,34 @@ public class PortalHealthServlet extends AbstractPortalServlet {
     private static final long serialVersionUID = -6904322706994309318L;
 
     /**
-     * Request path for health check resulting in a JSON response containing the details of each
-     * liveness and readiness check together.
-     * Returns HTTP 200 (OK) if all checks pass,
-     * or HTTP 500 (Internal Service Error) if one or more fail.
-     * Authentication is required! If the user is not authenticated a simplified status is returned,
-     * see {@link PortalHealthServlet#REQUEST_PATH_HEALTH}.
+     * Request path for health check resulting in a JSON response containing the
+     * details of each liveness and readiness check together. Returns HTTP 200 (OK)
+     * if all checks pass, or HTTP 500 (Internal Service Error) if one or more fail.
+     * Authentication is required! If the user is not authenticated a simplified
+     * status is returned, see {@link PortalHealthServlet#REQUEST_PATH_HEALTH}.
      */
     static final String REQUEST_PATH_HEALTH = "/health";
 
     /**
-     * Request path for liveness check resulting in a JSON response containing the details of all
-     * liveness checks.
-     * Returns HTTP 200 (OK) if all checks pass,
-     * or HTTP 503 (Service Unavailable) if one or more fail.
-     * Authentication is required! If the user is not authenticated a simplified status is returned,
+     * Request path for liveness check resulting in a JSON response containing the
+     * details of all liveness checks. Returns HTTP 200 (OK) if all checks pass, or
+     * HTTP 503 (Service Unavailable) if one or more fail. Authentication is
+     * required! If the user is not authenticated a simplified status is returned,
      * see {@link PortalHealthServlet#REQUEST_PATH_HEALTH}.
      */
     static final String REQUEST_PATH_LIVENESS = REQUEST_PATH_HEALTH + "/live";
 
     /**
-     * Request path for readiness check resulting in a JSON response containing the details of all
-     * readiness checks.
-     * Returns HTTP 200 (OK) if all checks pass,
-     * or HTTP 503 (Service Unavailable) if one or more fail.
-     * Authentication is required! If the user is not authenticated a simplified status is returned,
+     * Request path for readiness check resulting in a JSON response containing the
+     * details of all readiness checks. Returns HTTP 200 (OK) if all checks pass, or
+     * HTTP 503 (Service Unavailable) if one or more fail. Authentication is
+     * required! If the user is not authenticated a simplified status is returned,
      * see {@link PortalHealthServlet#REQUEST_PATH_HEALTH}.
      */
     static final String REQUEST_PATH_READINESS = REQUEST_PATH_HEALTH + "/ready";
 
-    private static final String UNKNOWN_ENDPOINT_MSG =
-        "Portal-152: Displaying no details, wrong endpoint, expected '" + REQUEST_PATH_HEALTH + "', '"
-                + REQUEST_PATH_LIVENESS + "' or '" + REQUEST_PATH_READINESS + "', but was: ";
+    private static final String UNKNOWN_ENDPOINT_MSG = "Portal-152: Displaying no details, wrong endpoint, expected '"
+            + REQUEST_PATH_HEALTH + "', '" + REQUEST_PATH_LIVENESS + "' or '" + REQUEST_PATH_READINESS + "', but was: ";
 
     @Inject
     @ConfigProperty(name = PORTAL_HEALTHCHECK_ENABLED)
@@ -135,8 +145,7 @@ public class PortalHealthServlet extends AbstractPortalServlet {
      * }
      * </pre>
      *
-     * <h2>Example Health MicroProfile v2 output</h2>
-     * For detailed information see:
+     * <h2>Example Health MicroProfile v2 output</h2> For detailed information see:
      * <a href=
      * "https://github.com/eclipse/microprofile-health/blob/2.0.1/spec/src/main/asciidoc/protocol-wireformat.adoc">Wireformat</a>
      *
@@ -250,7 +259,7 @@ public class PortalHealthServlet extends AbstractPortalServlet {
     }
 
     private void reportMicroProfileConform(final HttpServletRequest request, final HttpServletResponse response)
-        throws IOException {
+            throws IOException {
         final var healthReporter = healthReporterProvider.get();
         final var health = evaluateChecks(Endpoint.evaluate(request));
         if (health.isDown()) {
@@ -267,9 +276,8 @@ public class PortalHealthServlet extends AbstractPortalServlet {
     }
 
     private static void addStatus(final boolean isDown, final JsonObjectBuilder builder) {
-        builder.add("status", isDown
-                ? HealthCheckResponse.Status.DOWN.toString()
-                : HealthCheckResponse.Status.UP.toString());
+        builder.add("status",
+                isDown ? HealthCheckResponse.Status.DOWN.toString() : HealthCheckResponse.Status.UP.toString());
     }
 
     private SmallRyeHealth evaluateChecks(final Endpoint endpoint) {

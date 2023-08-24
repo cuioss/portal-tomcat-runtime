@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.cuioss.portal.tomcat.metrics;
 
 import java.io.Closeable;
@@ -55,12 +70,15 @@ class JvmGcMetrics implements Closeable {
     // jvm.gc.memory.allocated metric
     private final AtomicLong allocatedBytes = new AtomicLong(0);
 
-    // Mimicking the jvm.gc.pause timer. We don't have an exact equivalent of Micrometer's timer, so
+    // Mimicking the jvm.gc.pause timer. We don't have an exact equivalent of
+    // Micrometer's timer, so
     // emulate
     // it with one gauge and two counters.
-    // We use a wrapper class to wrap the 'cause' and 'action' fields of GC event descriptors into
+    // We use a wrapper class to wrap the 'cause' and 'action' fields of GC event
+    // descriptors into
     // one class
-    // We defer registering these metrics to runtime, because we don't assume we know in advance the
+    // We defer registering these metrics to runtime, because we don't assume we
+    // know in advance the
     // full set of
     // causes and actions
 
@@ -83,8 +101,7 @@ class JvmGcMetrics implements Closeable {
                 return false;
             }
             final var that = (CauseAndActionWrapper) o;
-            return Objects.equals(cause, that.cause) &&
-                    Objects.equals(action, that.action);
+            return Objects.equals(cause, that.cause) && Objects.equals(action, that.action);
         }
 
         @Override
@@ -99,7 +116,8 @@ class JvmGcMetrics implements Closeable {
     // and the same for concurrent GC phases
     private final Map<CauseAndActionWrapper, AtomicLong> gcPauseMaxConcurrent = new HashMap<>();
 
-    // To keep track of notification listeners that we register so we can clean them up later
+    // To keep track of notification listeners that we register so we can clean them
+    // up later
     private final Map<NotificationEmitter, NotificationListener> notificationEmitters = new HashMap<>();
 
     private final boolean micrometerCompatibility;
@@ -121,31 +139,20 @@ class JvmGcMetrics implements Closeable {
             return;
         }
 
-        registry.register(new ExtendedMetadataBuilder()
-                .withName("jvm.gc.max.data.size")
-                .withType(MetricType.GAUGE)
-                .withUnit(MetricUnits.BYTES)
-                .withDescription("Max size of old generation memory pool")
-                .skipsScopeInOpenMetricsExportCompletely(true)
-                .build(), (Gauge<?>) this::getMaxDataSize);
+        registry.register(new ExtendedMetadataBuilder().withName("jvm.gc.max.data.size").withType(MetricType.GAUGE)
+                .withUnit(MetricUnits.BYTES).withDescription("Max size of old generation memory pool")
+                .skipsScopeInOpenMetricsExportCompletely(true).build(), (Gauge<?>) this::getMaxDataSize);
 
-        registry.register(new ExtendedMetadataBuilder()
-                .withName("jvm.gc.live.data.size")
-                .withType(MetricType.GAUGE)
-                .withUnit(MetricUnits.BYTES)
-                .withDescription("Size of old generation memory pool after a full GC")
-                .skipsScopeInOpenMetricsExportCompletely(true)
-                .build(), (Gauge<?>) this::getLiveDataSize);
+        registry.register(new ExtendedMetadataBuilder().withName("jvm.gc.live.data.size").withType(MetricType.GAUGE)
+                .withUnit(MetricUnits.BYTES).withDescription("Size of old generation memory pool after a full GC")
+                .skipsScopeInOpenMetricsExportCompletely(true).build(), (Gauge<?>) this::getLiveDataSize);
 
-        registry.register(new ExtendedMetadataBuilder()
-                .withName("jvm.gc.memory.promoted")
-                .withType(MetricType.COUNTER)
+        registry.register(new ExtendedMetadataBuilder().withName("jvm.gc.memory.promoted").withType(MetricType.COUNTER)
                 .withUnit(MetricUnits.BYTES)
                 .withDescription(
                         "Count of positive increases in the size of the old generation memory pool before GC to after GC")
                 .skipsScopeInOpenMetricsExportCompletely(true)
-                .withOpenMetricsKeyOverride("jvm_gc_memory_promoted_bytes_total")
-                .build(), new GetCountOnlyCounter() {
+                .withOpenMetricsKeyOverride("jvm_gc_memory_promoted_bytes_total").build(), new GetCountOnlyCounter() {
 
                     @Override
                     public long getCount() {
@@ -153,16 +160,17 @@ class JvmGcMetrics implements Closeable {
                     }
                 });
 
-        registry.register(new ExtendedMetadataBuilder()
-                .withName("jvm.gc.memory.allocated")
-                .withType(MetricType.COUNTER)
-                .withUnit(MetricUnits.BYTES)
-                .withDescription(
-                        "Incremented for an increase in the size of the young generation memory pool after one GC to " +
-                                "before the next")
-                .skipsScopeInOpenMetricsExportCompletely(true)
-                .withOpenMetricsKeyOverride("jvm_gc_memory_allocated_bytes_total")
-                .build(), new GetCountOnlyCounter() {
+        registry.register(
+                new ExtendedMetadataBuilder().withName("jvm.gc.memory.allocated").withType(MetricType.COUNTER)
+                        .withUnit(MetricUnits.BYTES)
+                        .withDescription(
+                                """
+                                        Incremented for an increase in the size of the young generation memory pool after one GC to \
+                                        before the next\
+                                        """)
+                        .skipsScopeInOpenMetricsExportCompletely(true)
+                        .withOpenMetricsKeyOverride("jvm_gc_memory_allocated_bytes_total").build(),
+                new GetCountOnlyCounter() {
 
                     @Override
                     public long getCount() {
@@ -171,7 +179,8 @@ class JvmGcMetrics implements Closeable {
                 });
 
         // start updating the metric values in a listener for GC events
-        // Metrics that mimic the jvm.gc.pause timer will be registered lazily as GC events occur
+        // Metrics that mimic the jvm.gc.pause timer will be registered lazily as GC
+        // events occur
         startWatchingNotifications(registry);
     }
 
@@ -207,8 +216,8 @@ class JvmGcMetrics implements Closeable {
                 continue;
             }
 
-            final NotificationListener notificationListener =
-                (notification, ref) -> handleNotificationListener(registry, youngGenSizeAfter, notification);
+            final NotificationListener notificationListener = (notification,
+                    ref) -> handleNotificationListener(registry, youngGenSizeAfter, notification);
             final var notificationEmitter = (NotificationEmitter) mbean;
             notificationEmitter.addNotificationListener(notificationListener, null, null);
             notificationEmitters.put(notificationEmitter, notificationListener);
@@ -229,46 +238,33 @@ class JvmGcMetrics implements Closeable {
         final var duration = gcInfo.getDuration();
 
         final var metricName = isConcurrentPhase(gcCause) ? "jvm.gc.concurrent.phase.time" : "jvm.gc.pause";
-        final var mapForStoringMax = isConcurrentPhase(gcCause) ? gcPauseMax
-                : gcPauseMaxConcurrent;
+        final var mapForStoringMax = isConcurrentPhase(gcCause) ? gcPauseMax : gcPauseMaxConcurrent;
 
         final var tags = new Tag[] { new Tag("action", gcAction), new Tag("cause", gcCause) };
         final var causeAndAction = new CauseAndActionWrapper(gcCause, gcAction);
 
         final var pauseSecondsMaxMetricID = new MetricID(metricName + ".seconds.max", tags);
-        final var gcPauseMaxValue = mapForStoringMax.computeIfAbsent(causeAndAction,
-                k -> new AtomicLong(0));
+        final var gcPauseMaxValue = mapForStoringMax.computeIfAbsent(causeAndAction, k -> new AtomicLong(0));
         if (duration > gcPauseMaxValue.get()) {
             gcPauseMaxValue.set(duration); // update the maximum GC length if needed
         }
         if (!registry.getGauges().containsKey(pauseSecondsMaxMetricID)) {
-            registry.register(new ExtendedMetadataBuilder()
-                    .withName(metricName + ".seconds.max")
-                    .withType(MetricType.GAUGE)
-                    .withUnit(MetricUnits.NONE)
-                    .withDescription(TIME_SPENT_IN_GC_PAUSE)
-                    .skipsScopeInOpenMetricsExportCompletely(true)
-                    .build(),
+            registry.register(
+                    new ExtendedMetadataBuilder().withName(metricName + ".seconds.max").withType(MetricType.GAUGE)
+                            .withUnit(MetricUnits.NONE).withDescription(TIME_SPENT_IN_GC_PAUSE)
+                            .skipsScopeInOpenMetricsExportCompletely(true).build(),
                     (Gauge<?>) () -> mapForStoringMax.get(causeAndAction).doubleValue() / 1000.0, tags);
         }
 
-        registry.counter(new ExtendedMetadataBuilder()
-                .withName(metricName + ".seconds.count")
-                .withType(MetricType.COUNTER)
-                .withUnit(MetricUnits.NONE)
-                .withDescription(TIME_SPENT_IN_GC_PAUSE)
+        registry.counter(new ExtendedMetadataBuilder().withName(metricName + ".seconds.count")
+                .withType(MetricType.COUNTER).withUnit(MetricUnits.NONE).withDescription(TIME_SPENT_IN_GC_PAUSE)
                 .skipsScopeInOpenMetricsExportCompletely(true)
-                .withOpenMetricsKeyOverride(metricName.replace(".", "_") + "_seconds_count")
-                .build(), tags).inc();
+                .withOpenMetricsKeyOverride(metricName.replace(".", "_") + "_seconds_count").build(), tags).inc();
 
-        registry.counter(new ExtendedMetadataBuilder()
-                .withName(metricName + ".seconds.sum")
-                .withType(MetricType.COUNTER)
-                .withUnit(MetricUnits.MILLISECONDS)
-                .withDescription(TIME_SPENT_IN_GC_PAUSE)
+        registry.counter(new ExtendedMetadataBuilder().withName(metricName + ".seconds.sum")
+                .withType(MetricType.COUNTER).withUnit(MetricUnits.MILLISECONDS).withDescription(TIME_SPENT_IN_GC_PAUSE)
                 .skipsScopeInOpenMetricsExportCompletely(true)
-                .withOpenMetricsKeyOverride(metricName.replace(".", "_") + "_seconds_sum")
-                .build(), tags).inc(duration);
+                .withOpenMetricsKeyOverride(metricName.replace(".", "_") + "_seconds_sum").build(), tags).inc(duration);
 
         // Update promotion and allocation counters
         final var before = gcInfo.getMemoryUsageBeforeGc();
@@ -288,8 +284,7 @@ class JvmGcMetrics implements Closeable {
             // live data size we record the value if we see a reduction in the old gen heap
             // size or
             // after a major GC.
-            if (oldAfter < oldBefore
-                    || GcGenerationAge.fromName(notificationInfo.getGcName()) == GcGenerationAge.OLD) {
+            if (oldAfter < oldBefore || GcGenerationAge.fromName(notificationInfo.getGcName()) == GcGenerationAge.OLD) {
                 liveDataSize.set(oldAfter);
                 final var oldMaxAfter = after.get(oldGenPoolName).getMax();
                 maxDataSize.set(oldMaxAfter);
@@ -308,15 +303,13 @@ class JvmGcMetrics implements Closeable {
     }
 
     private void registerGCTotal(final MetricRegistry registry, final GarbageCollectorMXBean mbean) {
-        registry.register(new ExtendedMetadataBuilder()
-                .withName("gc.total")
-                .withDisplayName("Garbage Collection Count")
+        registry.register(new ExtendedMetadataBuilder().withName("gc.total").withDisplayName("Garbage Collection Count")
                 .withType(MetricType.COUNTER)
                 // multi!
-                .withDescription("Displays the total number of collections that have occurred. " +
-                        "This attribute lists -1 if the collection count is undefined for this collector.")
-                .build(),
-                new GetCountOnlyCounter() {
+                .withDescription("""
+                        Displays the total number of collections that have occurred. \
+                        This attribute lists -1 if the collection count is undefined for this collector.\
+                        """).build(), new GetCountOnlyCounter() {
 
                     @Override
                     public long getCount() {
@@ -326,22 +319,16 @@ class JvmGcMetrics implements Closeable {
     }
 
     private void registerGCTime(final MetricRegistry registry, final GarbageCollectorMXBean mbean) {
-        registry.register(new ExtendedMetadataBuilder()
-                .withName("gc.time")
-                .withDisplayName("Garbage Collection Time")
-                .withUnit(MetricUnits.MILLISECONDS)
-                .withType(MetricType.GAUGE)
+        registry.register(new ExtendedMetadataBuilder().withName("gc.time").withDisplayName("Garbage Collection Time")
+                .withUnit(MetricUnits.MILLISECONDS).withType(MetricType.GAUGE)
                 // multi!
-                .withDescription("Displays the approximate accumulated collection elapsed time in " +
-                        "milliseconds. This attribute displays -1 if the collection elapsed time is undefined for"
-                        +
-                        " this collector. The Java virtual machine implementation may use a high resolution timer"
-                        +
-                        " to measure the elapsed time. This attribute may display the same value even if the " +
-                        "collection count has been incremented if the collection elapsed time is very short.")
-                .build(),
-                (Gauge<?>) mbean::getCollectionTime,
-                new Tag("name", mbean.getName()));
+                .withDescription("""
+                        Displays the approximate accumulated collection elapsed time in\s\
+                        milliseconds. This attribute displays -1 if the collection elapsed time is undefined for\
+                         this collector. The Java virtual machine implementation may use a high resolution timer\
+                         to measure the elapsed time. This attribute may display the same value even if the\s\
+                        collection count has been incremented if the collection elapsed time is very short.""").build(),
+                (Gauge<?>) mbean::getCollectionTime, new Tag("name", mbean.getName()));
     }
 
     @Override
@@ -370,14 +357,12 @@ class JvmGcMetrics implements Closeable {
 
     enum GcGenerationAge {
 
-        OLD,
-        YOUNG,
-        UNKNOWN;
+        OLD, YOUNG, UNKNOWN;
 
-        private static final Map<String, GcGenerationAge> knownCollectors =
-            new MapBuilder<String, GcGenerationAge>().put("ConcurrentMarkSweep", OLD).put("Copy", YOUNG)
-                    .put("G1 Old Generation", OLD).put("G1 Young Generation", YOUNG).put("MarkSweepCompact", OLD)
-                    .put("PS MarkSweep", OLD).put("PS Scavenge", YOUNG).put("ParNew", YOUNG).toImmutableMap();
+        private static final Map<String, GcGenerationAge> knownCollectors = new MapBuilder<String, GcGenerationAge>()
+                .put("ConcurrentMarkSweep", OLD).put("Copy", YOUNG).put("G1 Old Generation", OLD)
+                .put("G1 Young Generation", YOUNG).put("MarkSweepCompact", OLD).put("PS MarkSweep", OLD)
+                .put("PS Scavenge", YOUNG).put("ParNew", YOUNG).toImmutableMap();
 
         static GcGenerationAge fromName(final String name) {
             return knownCollectors.getOrDefault(name, UNKNOWN);
@@ -391,8 +376,10 @@ class JvmGcMetrics implements Closeable {
             return true;
         } catch (final Exception e) {
             // We are operating in a JVM without access to this level of detail
-            LOGGER.debug("GC notifications will not be available because " +
-                    "com.sun.management.GarbageCollectionNotificationInfo is not present");
+            LOGGER.debug("""
+                    GC notifications will not be available because \
+                    com.sun.management.GarbageCollectionNotificationInfo is not present\
+                    """);
             return false;
         }
     }

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.cuioss.portal.tomcat.authentication;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,13 +52,13 @@ class ServletAuthenticationFacadeTest implements ShouldHandleObjectContracts<Ser
 
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
-    private static final String[] ROLES = new String[] { "role1", "role2" };
+    private static final String[] ROLES = { "role1", "role2" };
 
-    private static final LoginCredentials VALID_CREDENTIALS =
-        LoginCredentials.builder().username(USERNAME).password(PASSWORD).build();
+    private static final LoginCredentials VALID_CREDENTIALS = LoginCredentials.builder().username(USERNAME)
+            .password(PASSWORD).build();
 
-    private static final LoginCredentials INCOMPLETE_CREDENTIALS =
-        LoginCredentials.builder().username(USERNAME).build();
+    private static final LoginCredentials INCOMPLETE_CREDENTIALS = LoginCredentials.builder().username(USERNAME)
+            .build();
 
     @Inject
     @Getter
@@ -212,8 +227,7 @@ class ServletAuthenticationFacadeTest implements ShouldHandleObjectContracts<Ser
         Objects.requireNonNull(username);
         try {
             return "Basic " + Base64.getEncoder().encodeToString(
-                    Joiner.on(':').skipNulls().join(username, password)
-                            .getBytes(StandardCharsets.UTF_8.name()));
+                    Joiner.on(':').skipNulls().join(username, password).getBytes(StandardCharsets.UTF_8.name()));
         } catch (final Exception e) {
             log.error("could not encode basic auth credentials", e);
         }

@@ -1,13 +1,19 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>portal-tomcat-authentication</artifactId>
-    <description>Implementation of authentication-service that handles the login against servlet-api</description>
+    <description>Implementation of authentication-service that handles the login
+        against servlet-api</description>
     <parent>
         <groupId>de.cuioss.portal.tomcat</groupId>
         <artifactId>modules</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
+    <properties>
+        <maven.jar.plugin.automatic.module.name>
+            de.cuioss.portal.tomcat.authentication</maven.jar.plugin.automatic.module.name>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>de.cuioss.portal.authentication</groupId>
@@ -17,6 +23,10 @@
         <dependency>
             <groupId>de.cuioss.test</groupId>
             <artifactId>cui-jsf-test-basic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
         </dependency>
         <dependency>
             <groupId>de.cuioss.portal.test</groupId>
