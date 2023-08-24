@@ -33,21 +33,4 @@
         <module>bom</module>
         <module>modules</module>
     </modules>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.openrewrite.maven</groupId>
-                <artifactId>rewrite-maven-plugin</artifactId>
-                <configuration>
-                    <activeRecipes>
-                        <recipe>org.openrewrite.java.AddApache2LicenseHeader</recipe>
-                        <recipe>
-                            org.openrewrite.java.testing.junit5.JUnit5BestPractices</recipe>
-                        <recipe>org.openrewrite.java.migrate.Java8toJava11</recipe>
-                        <recipe>org.openrewrite.java.migrate.UpgradeToJava17</recipe>
-                    </activeRecipes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
